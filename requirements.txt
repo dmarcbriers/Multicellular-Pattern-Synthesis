@@ -1,0 +1,6 @@
+matplotlib==2.1.0
+numpy==1.15.2
+pandas==0.20.3
+scikit-image==0.15.dev0
+scipy==0.19.1
+seaborn==0.8.1
