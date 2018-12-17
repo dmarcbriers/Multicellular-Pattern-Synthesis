@@ -24,7 +24,7 @@ def main():
     args = read_args()                                # read command line input
     CellLines = configure_cell_lines()                # set/infer cell properties from experiments
     
-    model_file = 'AdhesionDriven_CellModel_v5.7.2.xml'
+    model_file = 'AdhesionDriven_CellModel_v5.7.2.latest.xml'
     configure_XML_model(args, model_file, CellLines)  # create folder, and modify XML file
     
     run_model(model_file)                             # runs simulation, saves stderr/stdout to file
@@ -46,25 +46,25 @@ def read_args():
     
     #Set command line arguments
     parser.add_argument("cell_line_1",
-                        help="Cell line 1.[CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,ROCK1-20--CDH1-0,wildtype]",
+                        help="Cell line 1.{CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,ROCK1-20--CDH1-0,wildtype}",
                         type=str)
     parser.add_argument('time_1',
                         help='Time cell line 1 recives gene knockout signal[-144,96]',
                         type=str)
     parser.add_argument('cell_line_2',
-                        help='Cell line 2.[CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,ROCK1-20--CDH1-0,wildtype]',
+                        help='Cell line 2.{CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,ROCK1-20--CDH1-0,wildtype}',
                         type=str)
     parser.add_argument('time_2',
                         help='Time cell line 2 recieves gene knockout signal.[-144,96]',
                         type=str)
     parser.add_argument('num_cells_cell_line_2',
-                        help='Number of initial cells. 100 cells total [0,99]',
+                        help='Number of initial cells for cell line 2. 100 cells total [0,99]',
                         type=str)
     parser.add_argument('sim_id',
                         help='Unique identifier for a simulations so replicates can be run.',
                         type=str)
     parser.add_argument('--simulation_time',
-                        help='Number of hours the model will simulate.',
+                        help='Number of hours the model will simulate. Default is 120 (units are hours)',
                         type=str)
     # Process arguments
     args = parser.parse_args()
@@ -92,7 +92,7 @@ def configure_cell_lines():
                 'area_edge_final_sd':49.66,
                 'membraneElasticity_final':1.12,
                 'membraneElasticity_final_edge':1.32,
-		'membrane_str_final':0.75,
+		'membrane_str_final':0.5,
                 'k_half_hours':48.28,
                 'generation_time_final': 20
                 }
@@ -104,7 +104,7 @@ def configure_cell_lines():
                     'area_edge_final_sd':57.96,
                     'membraneElasticity_final':1.10,
                     'membraneElasticity_final_edge':1.23,
-                    'membrane_str_final':0.75,
+                    'membrane_str_final':0.5,
                     'k_half_hours':48.28,
                     'generation_time_final': 18
                     }
@@ -148,7 +148,7 @@ def configure_cell_lines():
                         'area_edge_final_sd':57.96,
                         'membraneElasticity_final':new_membrane,
                         'membraneElasticity_final_edge':new_membrane_edge,
-                        'membrane_str_final':0.75,
+                        'membrane_str_final':0.5,
                         'k_half_hours':48.28,
                         'generation_time_final': 20
                         }
@@ -163,7 +163,7 @@ def configure_cell_lines():
                     'area_edge_final_sd':60.06,
                     'membraneElasticity_final':1.17, #was 1.37
                     'membraneElasticity_final_edge':1.41,  #was 1.97
-                    'membrane_str_final':2.0, #wt is 0.75
+                    'membrane_str_final':2.0, #wt is 0.5
                     'k_half_hours':46.78,
                     'generation_time_final': 20
                     }
@@ -175,8 +175,7 @@ def configure_cell_lines():
 def configure_XML_model(args, model_file,cell_lines):
     output_folder = "%s_%s_%s_%s_%s_%s" % (args.cell_line_1,args.time_1,args.cell_line_2,args.time_2,args.num_cells_cell_line_2,args.sim_id)
     
-    output_folder_prefix = "simulations5.7.2"
-    #output_folder_prefix = "cdh1_fit_oct2017"
+    output_folder_prefix = "simulations"
     output_folder = os.path.join(output_folder_prefix,output_folder) #prefix folder
     
     
@@ -252,16 +251,14 @@ def change_XML(args,model_file,cell_lines):
     stop_time.setAttribute("value",str(simulation_stop_time))
     
     # Write XML file 
-    file_handle = open(model_file,"wb")
+    file_handle = open(model_file,"w")
     doc.writexml(file_handle)
     file_handle.close()
     #sys.exit()
 
 ######################################## running the model ####################
 def run_model(model_file):
-
-    os.system('module load morpheus')  # required by eng-grid.bu.edu
-    status = os.system("time morpheus -file %s > model_output.txt 2>&1" % model_file)
+    status = os.system("morpheus -file %s > model_output.txt 2>&1" % model_file)
 
     return status
 

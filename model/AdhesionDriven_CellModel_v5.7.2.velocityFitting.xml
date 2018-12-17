@@ -1,4 +1,5 @@
-<?xml version="1.0" ?><MorpheusModel version="2">
+<?xml version='1.0'?>
+<MorpheusModel version="3">
     <Description>
         <Title>Adhesion Driven Cell Sorting</Title>
         <Details>This is a energy-based model of cell sorting and migration. However, one major challenge is relating the energy terms of a CPM to mechanical forces measrured biological experiments (protein expression).
@@ -20,13 +21,13 @@ v5.6 changes
 added random seed so time doesn't determine randomness of initial cell positions</Details>
     </Description>
     <Global>
-        <Variable symbol="ct1_adhesion" value="-100"/>
-        <Variable symbol="ct2_adhesion" value="-100"/>
+        <Variable symbol="ct1_adhesion" value="adhesion_level"/>
+        <Variable symbol="ct2_adhesion" value="adhesion_level"/>
         <Variable symbol="ct1_ct2" value="max(ct1_adhesion,ct2_adhesion)"/>
         <Variable symbol="ctall_medium_adhesion" value="0"/>
-        <Variable name="time_of_knockout_initiation_ct1_adhesion" symbol="ct1_perturbation_time" value="0"/>
-        <Constant symbol="adhesion_init_ct1" value="-100"/>
-        <Variable symbol="ct1_adhesion_weak" value="-100"/>
+        <Variable symbol="ct1_perturbation_time" value="0" name="time_of_knockout_initiation_ct1_adhesion"/>
+        <Constant symbol="adhesion_init_ct1" value="adhesion_level"/>
+        <Variable symbol="ct1_adhesion_weak" value="adhesion_level"/>
         <Variable symbol="ct1_membraneElasticity_init" value="1.12"/>
         <Variable symbol="ct1_membraneElasticity" value="1.12"/>
         <Variable symbol="ct1_membraneElasticity_final" value="1.12"/>
@@ -34,27 +35,27 @@ added random seed so time doesn't determine randomness of initial cell positions
         <Variable symbol="ct1_membraneElasticity_edge" value="1.32"/>
         <Variable symbol="ct1_membraneElasticity_final_edge" value="1.32"/>
         <Variable symbol="ct1_k_half_hours" value="48.28"/>
-        <Variable name="" symbol="ct1_hill_n" value="5.0"/>
+        <Variable symbol="ct1_hill_n" value="5.0" name=""/>
         <Variable symbol="ct1_area_init" value="137"/>
-        <Variable name="" symbol="ct1_area" value="137"/>
-        <Variable name="" symbol="ct1_area_final" value="137"/>
+        <Variable symbol="ct1_area" value="137" name=""/>
+        <Variable symbol="ct1_area_final" value="137" name=""/>
         <Variable symbol="ct1_area_final_sd" value="34.03"/>
         <Variable symbol="ct1_area_edge_init" value="177"/>
-        <Variable name="" symbol="ct1_area_edge" value="177"/>
-        <Variable name="" symbol="ct1_area_edge_final" value="177"/>
+        <Variable symbol="ct1_area_edge" value="177" name=""/>
+        <Variable symbol="ct1_area_edge_final" value="177" name=""/>
         <Variable symbol="ct1_area_edge_final_sd" value="49.66"/>
         <Variable symbol="ct1_generation_time_init" value="20"/>
         <Variable symbol="ct1_generation_time_final" value="20"/>
         <Variable symbol="ct1_generation_time" value="20"/>
-        <Variable symbol="ct1_membrane_str_init" value="0.75"/>
-        <Variable symbol="ct1_membrane_str_final" value="0.75"/>
-        <Variable symbol="ct1_membrane_str" value="0.75"/>
-        <Variable symbol="ct1_persistent_motion_str_init" value="3"/>
-        <Variable symbol="ct1_persistent_motion_str_final" value="3"/>
-        <Variable symbol="ct1_persistent_motion" value="3"/>
-        <Variable name="time_of_knockout_initiation_ct2_adhesion" symbol="ct2_perturbation_time" value="0"/>
-        <Constant symbol="adhesion_init_ct2" value="-100"/>
-        <Variable symbol="ct2_adhesion_weak" value="-100"/>
+        <Variable symbol="ct1_membrane_str_init" value="str_membrane_level"/>
+        <Variable symbol="ct1_membrane_str_final" value="str_membrane_level"/>
+        <Variable symbol="ct1_membrane_str" value="str_membrane_level"/>
+        <Variable symbol="ct1_persistent_motion_str_init" value="str_pm_level"/>
+        <Variable symbol="ct1_persistent_motion_str_final" value="str_pm_level"/>
+        <Variable symbol="ct1_persistent_motion" value="str_pm_level"/>
+        <Variable symbol="ct2_perturbation_time" value="0" name="time_of_knockout_initiation_ct2_adhesion"/>
+        <Constant symbol="adhesion_init_ct2" value="adhesion_level"/>
+        <Variable symbol="ct2_adhesion_weak" value="adhesion_level"/>
         <Variable symbol="ct2_membraneElasticity_init" value="1.12"/>
         <Variable symbol="ct2_membraneElasticity" value="1.12"/>
         <Variable symbol="ct2_membraneElasticity_final" value="1.12"/>
@@ -74,17 +75,17 @@ added random seed so time doesn't determine randomness of initial cell positions
         <Variable symbol="ct2_generation_time_init" value="20"/>
         <Variable symbol="ct2_generation_time_final" value="20"/>
         <Variable symbol="ct2_generation_time" value="20"/>
-        <Variable symbol="ct2_membrane_str_init" value="0.75"/>
-        <Variable symbol="ct2_membrane_str_final" value="0.75"/>
-        <Variable symbol="ct2_membrane_str" value="0.75"/>
-        <Variable symbol="ct2_persistent_motion_str_init" value="3"/>
-        <Variable symbol="ct2_persistent_motion_str_final" value="3"/>
-        <Variable symbol="ct2_persistent_motion" value="3"/>
-        <System name="ct1_mechanics_updater" solver="euler" time-step="0.1">
+        <Variable symbol="ct2_membrane_str_init" value="str_membrane_level"/>
+        <Variable symbol="ct2_membrane_str_final" value="str_membrane_level"/>
+        <Variable symbol="ct2_membrane_str" value="str_membrane_level"/>
+        <Variable symbol="ct2_persistent_motion_str_init" value="str_pm_level"/>
+        <Variable symbol="ct2_persistent_motion_str_final" value="str_pm_level"/>
+        <Variable symbol="ct2_persistent_motion" value="str_pm_level"/>
+        <System solver="euler" time-step="0.1" name="ct1_mechanics_updater">
             <Rule symbol-ref="ct1_adhesion">
                 <Expression>if(time &lt; burn_in_time, adhesion_init_ct1,
-  if(time &gt; ct1_perturbation_time
-  and ct1_adhesion &gt;= adhesion_init_ct1
+  if(time > ct1_perturbation_time
+  and ct1_adhesion >= adhesion_init_ct1
   and ct1_adhesion &lt;= ct1_adhesion_weak,
     (1.0 / (1.0 + (pow(((time-ct1_perturbation_time)/ct1_k_half_hours),ct1_hill_n))))* (adhesion_init_ct1-ct1_adhesion_weak) + ct1_adhesion_weak,
   if(time &lt;= ct1_perturbation_time,adhesion_init_ct1,ct1_adhesion_weak)
@@ -92,8 +93,8 @@ added random seed so time doesn't determine randomness of initial cell positions
             </Rule>
             <Rule symbol-ref="ct1_membraneElasticity">
                 <Expression>if(time &lt; burn_in_time,ct1_membraneElasticity_init,
-  if(time &gt; ct1_perturbation_time 
-  and ct1_membraneElasticity &gt;= ct1_membraneElasticity_init
+  if(time > ct1_perturbation_time 
+  and ct1_membraneElasticity >= ct1_membraneElasticity_init
   and ct1_membraneElasticity &lt;= ct1_membraneElasticity_final,
     (1.0 / (1.0 + (pow(((time-ct1_perturbation_time)/ct1_k_half_hours),ct1_hill_n))))*(ct1_membraneElasticity_init-ct1_membraneElasticity_final) + ct1_membraneElasticity_final,
   if(time &lt;= ct1_perturbation_time,ct1_membraneElasticity_init,ct1_membraneElasticity_final)
@@ -101,15 +102,15 @@ added random seed so time doesn't determine randomness of initial cell positions
             </Rule>
             <Rule symbol-ref="ct1_membraneElasticity_edge">
                 <Expression>if(time &lt; burn_in_time,ct1_membraneElasticity_edge_init,
-  if(time &gt; ct1_perturbation_time 
-    and ct1_membraneElasticity_edge &gt;= ct1_membraneElasticity_edge_init
+  if(time > ct1_perturbation_time 
+    and ct1_membraneElasticity_edge >= ct1_membraneElasticity_edge_init
     and ct1_membraneElasticity_edge &lt;= ct1_membraneElasticity_final_edge,
     (1.0 / (1.0 + (pow(((time-ct1_perturbation_time)/ct1_k_half_hours),ct1_hill_n))))*(ct1_membraneElasticity_edge_init-ct1_membraneElasticity_final_edge) + ct1_membraneElasticity_final_edge,
   if(time &lt;= ct1_perturbation_time,ct1_membraneElasticity_edge_init,ct1_membraneElasticity_final_edge)
 ))</Expression>
             </Rule>
             <Rule symbol-ref="ct1_area">
-                <Expression>if(time &gt;burn_in_time,ct1_area_init,
+                <Expression>if(time >burn_in_time,ct1_area_init,
  if( (ct1_area_init &lt; ct1_area_final) 
      and ct1_area &lt; ct1_area_final,
 ct1_area_init + 
@@ -131,29 +132,27 @@ ct1_area_edge_final)
             </Rule>
             <Rule symbol-ref="ct1_generation_time">
                 <Expression>if(time &lt; burn_in_time, ct1_generation_time_init,
-  if(time &gt; ct1_perturbation_time,
+  if(time > ct1_perturbation_time,
     (1.0 / (1.0 + (pow(((time-ct1_perturbation_time)/ct1_k_half_hours),ct1_hill_n))))* (ct1_generation_time_init-ct1_generation_time_final) + ct1_generation_time_final,
   if(time &lt;= ct1_perturbation_time,ct1_generation_time_init,ct1_generation_time_final)
 ))
 </Expression>
             </Rule>
-    <Rule symbol-ref="ct1_membrane_str">
-    <Expression>if(time &lt; burn_in_time, ct1_membrane_str_init,
-  if(time &gt; ct1_perturbation_time
-  and ct1_membrane_str &gt;= ct1_membrane_str_init
+            <Rule symbol-ref="ct1_membrane_str">
+                <Expression>if(time &lt; burn_in_time, ct1_membrane_str_init,
+  if(time > ct1_perturbation_time
+  and ct1_membrane_str >= ct1_membrane_str_init
   and ct1_membrane_str &lt;= ct1_membrane_str_final,
     (1.0 / (1.0 + (pow(((time-ct1_perturbation_time)/ct1_k_half_hours),ct1_hill_n))))* (ct1_membrane_str_init-ct1_membrane_str_final) + ct1_membrane_str_final,
   if(time &lt;= ct1_perturbation_time,ct1_membrane_str_init,ct1_membrane_str_final)
 ))</Expression>
             </Rule>
         </System>
-
-
-        <System name="ct2_mechanics_updater" solver="euler" time-step="0.1">
+        <System solver="euler" time-step="0.1" name="ct2_mechanics_updater">
             <Rule symbol-ref="ct2_adhesion">
                 <Expression>if(time &lt; burn_in_time,adhesion_init_ct2,
-  if(time &gt; ct2_perturbation_time 
-  and ct2_adhesion &gt;= adhesion_init_ct2
+  if(time > ct2_perturbation_time 
+  and ct2_adhesion >= adhesion_init_ct2
   and ct2_adhesion &lt;= ct2_adhesion_weak,
   (1.0 / (1.0 + (pow(((time-ct2_perturbation_time)/ct2_k_half_hours),ct2_hill_n))))*(adhesion_init_ct2-ct2_adhesion_weak) + ct2_adhesion_weak,
   if(time &lt;= ct2_perturbation_time,adhesion_init_ct2,ct2_adhesion_weak)
@@ -161,8 +160,8 @@ ct1_area_edge_final)
             </Rule>
             <Rule symbol-ref="ct2_membraneElasticity">
                 <Expression>if(time &lt; burn_in_time,ct2_membraneElasticity_init,
-  if(time &gt; ct2_perturbation_time 
-  and ct2_membraneElasticity &gt;= ct2_membraneElasticity_init
+  if(time > ct2_perturbation_time 
+  and ct2_membraneElasticity >= ct2_membraneElasticity_init
   and ct2_membraneElasticity &lt;= ct2_membraneElasticity_final,
     (1.0 / (1.0 + (pow(((time-ct2_perturbation_time)/ct2_k_half_hours),ct2_hill_n))))*
 (ct2_membraneElasticity_init-ct2_membraneElasticity_final) + ct2_membraneElasticity_final,
@@ -171,8 +170,8 @@ ct1_area_edge_final)
             </Rule>
             <Rule symbol-ref="ct2_membraneElasticity_edge">
                 <Expression>if(time &lt; burn_in_time,ct2_membraneElasticity_edge_init,
-  if(time &gt; ct2_perturbation_time 
-  and ct2_membraneElasticity_edge &gt;= ct2_membraneElasticity_edge_init
+  if(time > ct2_perturbation_time 
+  and ct2_membraneElasticity_edge >= ct2_membraneElasticity_edge_init
   and ct2_membraneElasticity_edge &lt;= ct2_membraneElasticity_final_edge,
     (1.0 / (1.0 + (pow(((time-ct2_perturbation_time)/ct2_k_half_hours),ct2_hill_n))))*(ct2_membraneElasticity_edge_init-ct2_membraneElasticity_final_edge) + ct2_membraneElasticity_final_edge,
   if(time &lt;= ct2_perturbation_time,ct2_membraneElasticity_edge_init,ct2_membraneElasticity_final_edge)
@@ -199,24 +198,23 @@ ct1_area_edge_final)
             </Rule>
             <Rule symbol-ref="ct2_generation_time">
                 <Expression>if(time &lt; burn_in_time, ct2_generation_time_init,
-  if(time &gt; ct2_perturbation_time,
+  if(time > ct2_perturbation_time,
     (1.0 / (1.0 + (pow(((time-ct2_perturbation_time)/ct2_k_half_hours),ct2_hill_n))))* (ct2_generation_time_init-ct2_generation_time_final) + ct2_generation_time_final,
   if(time &lt;= ct2_perturbation_time,ct2_generation_time_init,ct2_generation_time_final)
 ))
 </Expression>
             </Rule>
-<Rule symbol-ref="ct2_membrane_str">
-<Expression>if(time &lt; burn_in_time, ct2_membrane_str_init,
-  if(time &gt; ct2_perturbation_time
-  and ct2_membrane_str &gt;= ct2_membrane_str_init
+            <Rule symbol-ref="ct2_membrane_str">
+                <Expression>if(time &lt; burn_in_time, ct2_membrane_str_init,
+  if(time > ct2_perturbation_time
+  and ct2_membrane_str >= ct2_membrane_str_init
   and ct2_membrane_str &lt;= ct2_membrane_str_final,
     (1.0 / (1.0 + (pow(((time-ct2_perturbation_time)/ct1_k_half_hours),ct2_hill_n))))* (ct2_membrane_str_init-ct2_membrane_str_final) + ct2_membrane_str_final,
   if(time &lt;= ct2_perturbation_time,ct2_membrane_str_init,ct2_membrane_str_final)
 ))</Expression>
-</Rule>
-
-</System>
-        <System name="adhesion_ct1_ct2" solver="euler" time-step="0.1">
+            </Rule>
+        </System>
+        <System solver="euler" time-step="0.1" name="adhesion_ct1_ct2">
             <Rule symbol-ref="ct1_ct2">
                 <Expression>max(ct1_adhesion,ct2_adhesion)</Expression>
             </Rule>
@@ -225,7 +223,7 @@ ct1_area_edge_final)
         <Constant symbol="wt_offset_y" value="0"/>
         <Constant symbol="inhibited_offset_x" value="0"/>
         <Constant symbol="inhibited_offset_y" value="0"/>
-        <Field name="chemoattractant" symbol="U" value="0">
+        <Field symbol="U" value="0" name="chemoattractant">
             <Diffusion rate="0"/>
         </Field>
         <!--    <Disabled>
@@ -246,10 +244,15 @@ ct1_area_edge_final)
         </Field>
     </Disabled>
 -->
-        <Variable symbol="num_cells_ct2" value="50"/>
-        <Variable symbol="num_cells_ct1" value="100-num_cells_ct2"/>
-        <Variable name="percent_membrane_bordeing_media" symbol="avgMediaNeighborLength" value="1"/>
+        <Variable symbol="num_cells_ct2" value="200 + rand_uni(0,200)"/>
+        <Variable symbol="num_cells_ct1" value="200 + rand_uni(0,200)"/>
+        <Variable symbol="avgMediaNeighborLength" value="1" name="percent_membrane_bordeing_media"/>
         <Variable symbol="burn_in_time" value="5"/>
+        <Variable symbol="str_pm_level" value="3.0"/>
+        <Variable symbol="adhesion_level" value="-100"/>
+        <Variable symbol="str_membrane_level" value="0.5"/>
+        <VariableVector symbol="displacement" value="0,0,0"/>
+        <VariableVector symbol="dv" value="0,0,0"/>
     </Global>
     <Space>
         <Lattice class="square">
@@ -266,17 +269,20 @@ ct1_area_edge_final)
     </Space>
     <Time>
         <StartTime value="0"/>
-        <StopTime symbol="hours" value="96"/>
+        <StopTime symbol="hours" value="15"/>
         <TimeSymbol symbol="time"/>
+        <!--    <Disabled>
         <RandomSeed value="43263"/>
+    </Disabled>
+-->
     </Time>
     <CellTypes>
         <CellType class="biological" name="ct1">
-            <Property name="divisions" symbol="d" value="0"/>
-            <Property name="color" symbol="c" value="0"/>
-            <Property name="generationTime" symbol="dt" value="ct1_generation_time"/>
-            <Property name="division_time_counter" symbol="dc" value="0.0"/>
-            <Property name="cell (for counting)" symbol="cell" value="1.0"/>
+            <Property symbol="d" value="0" name="divisions"/>
+            <Property symbol="c" value="0" name="color"/>
+            <Property symbol="dt" value="ct1_generation_time" name="generationTime"/>
+            <Property symbol="dc" value="0.0" name="division_time_counter"/>
+            <Property symbol="cell" value="1.0" name="cell (for counting)"/>
             <Property symbol="cadherin" value="ct1_adhesion"/>
             <Property symbol="ct1_ct2_adhesion" value="ct1_ct2"/>
             <!--    <Disabled>
@@ -293,10 +299,10 @@ ct1_area_edge_final)
 -->
             <Property symbol="targetArea" value="ct1_area"/>
             <Property symbol="targetSurface" value="ct1_membraneElasticity"/>
-            <VolumeConstraint strength="1.0" target="targetArea"/>
-            <SurfaceConstraint strength="ct1_membrane_str" target="targetSurface"/>
-            <PropertyVector name="direction_vector" symbol="dv" value="0.0, 0.0, 0.0"/>
-            <PersistentMotion decay-time="0.003" protrusion="true" strength="6"/>
+            <VolumeConstraint target="targetArea" strength="1.0"/>
+            <SurfaceConstraint target="targetSurface" mode="aspherity" strength="ct1_membrane_str"/>
+            <PropertyVector symbol="dv" value="0.0, 0.0, 0.0" name="direction_vector"/>
+            <PersistentMotion protrusion="true" decay-time="0.5" strength="str_pm_level"/>
             <!--    <Disabled>
         <Event trigger="when true" name="partitionCell">
             <Condition>dc == (dt-1)</Condition>
@@ -307,7 +313,7 @@ ct1_area_edge_final)
     </Disabled>
 -->
             <CellDivision daughterID="daughter" division-plane="minor">
-                <Condition>dc &gt;= dt</Condition>
+                <Condition>dc >= dt</Condition>
                 <Triggers name="">
                     <Rule symbol-ref="dc">
                         <Expression>0</Expression>
@@ -322,7 +328,7 @@ percentDaughterVolume*maxTargetArea,
 -->
                 </Triggers>
             </CellDivision>
-            <System name="cell_state_updater" solver="euler" time-step="1">
+            <System solver="euler" time-step="1" name="cell_state_updater">
                 <Rule symbol-ref="dc">
                     <Expression>dc+1</Expression>
                 </Rule>
@@ -346,23 +352,18 @@ percentDaughterVolume*maxTargetArea,
     </Disabled>
 -->
                 <Rule symbol-ref="targetSurface">
-                    <Expression>if(isEdgeCell &gt; 0,
+                    <Expression>if(isEdgeCell > 0,
 ct1_membraneElasticity_edge,
 ct1_membraneElasticity)</Expression>
                 </Rule>
             </System>
-            <!--    <Disabled>
-        <PropertyVector symbol="displacement" value=""/>
-    </Disabled>
--->
-            <!--    <Disabled>
-        <MotilityReporter time-step="1">
-            <Displacement symbol-ref="displacement"/>
-        </MotilityReporter>
-    </Disabled>
--->
+            <PropertyVector symbol="displacement" value=""/>
+            <MotilityReporter time-step="1">
+                <Displacement symbol-ref="displacement"/>
+                <Velocity symbol-ref="dv"/>
+            </MotilityReporter>
             <Property symbol="p" value="10"/>
-            <Chemotaxis contact-inhibition="true" field="U" retraction="true" strength="3"/>
+            <Chemotaxis contact-inhibition="true" field="U" strength="3" retraction="true"/>
             <Constant symbol="degp" value="0.9"/>
             <!--    <Disabled>
         <Protrusion field="protrusionMemory" maximum="10" strength="1"/>
@@ -371,31 +372,31 @@ ct1_membraneElasticity)</Expression>
             <Property symbol="isEdgeCell" value="0"/>
             <NeighborhoodReporter>
                 <Input scaling="cell" value="cell.type == celltype.medium.id"/>
-                <Output mapping="sum" symbol-ref="isEdgeCell"/>
+                <Output symbol-ref="isEdgeCell" mapping="sum"/>
             </NeighborhoodReporter>
             <Property symbol="ctall_medium_adhesion" value="ctall_medium_adhesion"/>
             <Property symbol="cell_area_final" value="0"/>
             <Property symbol="cell_area_edge_final" value="0"/>
         </CellType>
         <CellType class="biological" name="ct2">
-            <Property name="divisions" symbol="d" value="0"/>
-            <Property name="color" symbol="c" value="1"/>
-            <Property name="cell (for counting)" symbol="cell" value="1.0"/>
-            <Property name="generationTime" symbol="dt" value="ct2_generation_time"/>
-            <Property name="division_time_counter" symbol="dc" value="0.0"/>
-            <Property name="global_cadherin_inhibitedpop" symbol="cadherin" value="ct2_adhesion"/>
+            <Property symbol="d" value="0" name="divisions"/>
+            <Property symbol="c" value="1" name="color"/>
+            <Property symbol="cell" value="1.0" name="cell (for counting)"/>
+            <Property symbol="dt" value="ct2_generation_time" name="generationTime"/>
+            <Property symbol="dc" value="0.0" name="division_time_counter"/>
+            <Property symbol="cadherin" value="ct2_adhesion" name="global_cadherin_inhibitedpop"/>
             <Property symbol="ct1_ct2_adhesion" value="ct1_ct2"/>
             <Property symbol="ctall_medium_adhesion" value="ctall_medium_adhesion"/>
             <Property symbol="avgLikeNeighborCount" value="0"/>
             <Property symbol="avgLikeNeighborLength" value="0"/>
             <Property symbol="targetArea" value="ct2_area"/>
             <Property symbol="targetSurface" value="ct2_membraneElasticity"/>
-            <VolumeConstraint strength="1" target="targetArea"/>
-            <SurfaceConstraint strength="ct2_membrane_str" target="targetSurface"/>
-            <PropertyVector name="direction_vector" symbol="dv" value="0.0, 0.0, 0.0"/>
-            <PersistentMotion decay-time="0.003" protrusion="true" strength="6"/>
+            <VolumeConstraint target="targetArea" strength="1"/>
+            <SurfaceConstraint target="targetSurface" mode="aspherity" strength="ct2_membrane_str"/>
+            <PropertyVector symbol="dv" value="0.0, 0.0, 0.0" name="direction_vector"/>
+            <PersistentMotion protrusion="true" decay-time="0.5" strength="str_pm_level"/>
             <CellDivision daughterID="daughter" division-plane="major">
-                <Condition>dc &gt;= dt</Condition>
+                <Condition>dc >= dt</Condition>
                 <Triggers name="">
                     <Rule symbol-ref="dc">
                         <Expression>0</Expression>
@@ -410,7 +411,7 @@ percentDaughterVolume*maxTargetArea,
 -->
                 </Triggers>
             </CellDivision>
-            <System name="cell_state_updater" solver="euler" time-step="1">
+            <System solver="euler" time-step="1" name="cell_state_updater">
                 <Rule symbol-ref="dc">
                     <Expression>dc+1</Expression>
                 </Rule>
@@ -420,11 +421,11 @@ percentDaughterVolume*maxTargetArea,
         </Rule>
     </Disabled>
 -->
-                <Rule name="CellGrowth" symbol-ref="targetArea">
-                    <Expression>if(isEdgeCell &gt; 0,ct2_area_edge,ct2_area)</Expression>
+                <Rule symbol-ref="targetArea" name="CellGrowth">
+                    <Expression>if(isEdgeCell > 0,ct2_area_edge,ct2_area)</Expression>
                 </Rule>
                 <Rule symbol-ref="targetSurface">
-                    <Expression>if(isEdgeCell &gt; 0,ct2_membraneElasticity_edge,ct2_membraneElasticity)</Expression>
+                    <Expression>if(isEdgeCell > 0,ct2_membraneElasticity_edge,ct2_membraneElasticity)</Expression>
                 </Rule>
                 <!--    <Disabled>
         <Rule symbol-ref="ctall_medium_adhesion" name="peripheral_cell_migration">
@@ -433,19 +434,14 @@ percentDaughterVolume*maxTargetArea,
     </Disabled>
 -->
             </System>
-            <!--    <Disabled>
-        <PropertyVector symbol="displacement" value=""/>
-    </Disabled>
--->
-            <!--    <Disabled>
-        <MotilityReporter time-step="1">
-            <Displacement symbol-ref="displacement"/>
-        </MotilityReporter>
-    </Disabled>
--->
+            <PropertyVector symbol="displacement" value=""/>
+            <MotilityReporter time-step="1">
+                <Displacement symbol-ref="displacement"/>
+                <Velocity symbol-ref="dv"/>
+            </MotilityReporter>
             <Property symbol="p" value="10"/>
             <Constant symbol="degp" value="0.9"/>
-            <Chemotaxis contact-inhibition="true" field="U" retraction="true" strength="3"/>
+            <Chemotaxis contact-inhibition="true" field="U" strength="3" retraction="true"/>
             <!--    <Disabled>
         <Protrusion field="protrusionMemory" maximum="10" strength="1"/>
     </Disabled>
@@ -453,7 +449,7 @@ percentDaughterVolume*maxTargetArea,
             <Property symbol="isEdgeCell" value="0"/>
             <NeighborhoodReporter>
                 <Input scaling="cell" value="cell.type == celltype.medium.id"/>
-                <Output mapping="sum" symbol-ref="isEdgeCell"/>
+                <Output symbol-ref="isEdgeCell" mapping="sum"/>
             </NeighborhoodReporter>
             <Property symbol="cell_area_final" value="0"/>
             <Property symbol="cell_area_edge_final" value="0"/>
@@ -570,30 +566,36 @@ percentDaughterVolume*maxTargetArea,
     <CPM>
         <Interaction default="0">
             <Contact type1="ct1" type2="medium" value="0">
-                <HomophilicAdhesion adhesive="ctall_medium_adhesion" strength="1"/>
+                <HomophilicAdhesion strength="1" adhesive="ctall_medium_adhesion"/>
             </Contact>
             <Contact type1="ct2" type2="medium" value="0">
-                <HomophilicAdhesion adhesive="ctall_medium_adhesion" strength="1"/>
+                <HomophilicAdhesion strength="1" adhesive="ctall_medium_adhesion"/>
             </Contact>
             <Contact type1="ct1" type2="ct1" value="0">
-                <HomophilicAdhesion adhesive="cadherin" strength="1"/>
+                <HomophilicAdhesion strength="1" adhesive="cadherin"/>
             </Contact>
             <Contact type1="ct1" type2="ct2" value="0">
-                <HomophilicAdhesion adhesive="ct1_ct2" strength="1"/>
+                <HomophilicAdhesion strength="1" adhesive="ct1_ct2"/>
             </Contact>
             <Contact type1="ct2" type2="ct2" value="0">
-                <HomophilicAdhesion adhesive="cadherin" strength="1"/>
+                <HomophilicAdhesion strength="1" adhesive="cadherin"/>
             </Contact>
         </Interaction>
-        <MCSDuration value="0.03"/>
-        <MetropolisKinetics stepper="edgelist" temperature="10" yield="0.1">
+        <MonteCarloSampler stepper="edgelist">
+            <MCSDuration value="0.03"/>
             <Neighborhood>
                 <Order>4</Order>
             </Neighborhood>
-        </MetropolisKinetics>
+            <MetropolisKinetics temperature="10" yield="0.1"/>
+        </MonteCarloSampler>
+        <ShapeSurface scaling="norm">
+            <Neighborhood>
+                <Order>1</Order>
+            </Neighborhood>
+        </ShapeSurface>
     </CPM>
     <CellPopulations>
-        <Population name="cell_type_1" size="1" type="ct1">
+        <Population size="1" type="ct1" name="cell_type_1">
             <!--    <Disabled>
         <InitCircle mode="random" random_displacement="0.3*lattice.x" number-of-cells="75">
             <Dimensions radius="20" center="lattice.x/2,lattice.y/2,0"/>
@@ -603,8 +605,8 @@ percentDaughterVolume*maxTargetArea,
             <InitProperty symbol-ref="dc">
                 <Expression>rand_uni(0,dt)</Expression>
             </InitProperty>
-            <InitRectangle mode="regular" number-of-cells="num_cells_ct1" random-offset="10">
-                <Dimensions origin="(lattice.x/2)+wt_offset_x,(lattice.y/2)+wt_offset_y,0" size="60,20,0"/>
+            <InitRectangle mode="regular" random-offset="10" number-of-cells="num_cells_ct1">
+                <Dimensions size="60,20,0" origin="(lattice.x/2)+wt_offset_x,(lattice.y/2)+wt_offset_y,0"/>
             </InitRectangle>
             <!--    <Disabled>
         <InitProperty symbol-ref="cell_area_final">
@@ -620,9 +622,9 @@ percentDaughterVolume*maxTargetArea,
     </Disabled>
 -->
         </Population>
-        <Population name="cell_type_2" size="1" type="ct2">
-            <InitRectangle mode="regular" number-of-cells="num_cells_ct2" random-offset="10">
-                <Dimensions origin="(lattice.x/2)+inhibited_offset_x,(lattice.y/2)+inhibited_offset_y,0" size="60,20,0"/>
+        <Population size="1" type="ct2" name="cell_type_2">
+            <InitRectangle mode="regular" random-offset="10" number-of-cells="num_cells_ct2">
+                <Dimensions size="60,20,0" origin="(lattice.x/2)+inhibited_offset_x,(lattice.y/2)+inhibited_offset_y,0"/>
             </InitRectangle>
             <!--    <Disabled>
         <InitCircle mode="random" random_displacement="0.05*lattice.x" number-of-cells="25">
@@ -681,15 +683,15 @@ percentDaughterVolume*maxTargetArea,
 -->
     </CellPopulations>
     <Analysis>
-        <Gnuplotter decorate="false" time-step="1">
-            <Terminal name="png" size="1200,1200,0"/>
+        <Gnuplotter time-step="1" decorate="false">
+            <Terminal size="1200,1200,0" name="png"/>
             <Plot>
-                <Cells max="3" min="0" value="c">
+                <Cells value="c" min="0" max="3">
                     <ColorMap>
-                        <Color color="green" value="0"/>
-                        <Color color="red" value="1"/>
-                        <Color color="yellow" value="2"/>
-                        <Color color="blue" value="3"/>
+                        <Color value="0" color="light-blue"/>
+                        <Color value="1" color="red"/>
+                        <Color value="2" color="yellow"/>
+                        <Color value="3" color="blue"/>
                     </ColorMap>
                 </Cells>
                 <!--    <Disabled>
@@ -730,11 +732,13 @@ percentDaughterVolume*maxTargetArea,
         <Logger time-step="1">
             <Input>
                 <Symbol symbol-ref="ct1_adhesion"/>
+                <Symbol symbol-ref="ct1_membrane_str"/>
                 <Symbol symbol-ref="ct1_area"/>
                 <Symbol symbol-ref="ct1_area_edge"/>
                 <Symbol symbol-ref="ct1_membraneElasticity"/>
                 <Symbol symbol-ref="ct1_membraneElasticity_edge"/>
                 <Symbol symbol-ref="ct2_adhesion"/>
+                <Symbol symbol-ref="ct2_membrane_str"/>
                 <Symbol symbol-ref="ct2_area"/>
                 <Symbol symbol-ref="ct2_area_edge"/>
                 <Symbol symbol-ref="ct2_membraneElasticity"/>
@@ -743,22 +747,23 @@ percentDaughterVolume*maxTargetArea,
             <Output>
                 <TextOutput file-name="cell_membrane_properties" file-numbering="time"/>
             </Output>
-            <!--    <Disabled>
-        <Plots>
-            <Plot time-step="1" name="adhesion">
-                <Style grid="true" style="linespoints"/>
-                <Terminal file-numbering="time" terminal="png"/>
-                <X-axis>
-                    <Symbol symbol-ref="time"/>
-                </X-axis>
-                <Y-axis>
-                    <Symbol symbol-ref="ct1_adhesion"/>
-                    <Symbol symbol-ref="ct2_adhesion"/>
-                </Y-axis>
-            </Plot>
-        </Plots>
-    </Disabled>
--->
+        </Logger>
+        <Logger time-step="1">
+            <Input>
+                <Disabled>
+                    <Symbol symbol-ref="cell.id"/>
+                </Disabled>
+                <Symbol symbol-ref="cell.center.x"/>
+                <Symbol symbol-ref="cell.center.y"/>
+                <Symbol symbol-ref="cell.type"/>
+                <Symbol symbol-ref="displacement.abs"/>
+                <Symbol symbol-ref="dv.x"/>
+                <Symbol symbol-ref="dv.y"/>
+                <Symbol symbol-ref="dv.abs"/>
+            </Input>
+            <Output>
+                <TextOutput file-name="cell_positions" file-numbering="time"/>
+            </Output>
         </Logger>
         <!--    <Disabled>
         <DisplacementTracker time-step="1" celltype="ct1"/>
