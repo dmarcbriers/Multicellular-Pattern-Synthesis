@@ -22,5 +22,5 @@ RUN python3 -m pip install --upgrade pip setuptools && python3 -m pip install ma
 ADD morpheus_1.9.2_amd64~b161102.deb /tmp/morpheus_1.9.2_amd64~b161102.deb
 RUN apt install -y /tmp/morpheus_1.9.2_amd64~b161102.deb
 
-# Add testing to container
+# files to container
 # ADD runTest1.sh /usr/local/bin/runTest1.sh
