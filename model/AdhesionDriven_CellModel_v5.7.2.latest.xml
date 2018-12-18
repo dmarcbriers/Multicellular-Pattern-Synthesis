@@ -690,7 +690,7 @@ percentDaughterVolume*maxTargetArea,
             <Plot>
                 <Cells value="c" min="0" max="3">
                     <ColorMap>
-                        <Color value="0" color="light-blue"/>
+                        <Color value="0" color="green"/>
                         <Color value="1" color="red"/>
                         <Color value="2" color="yellow"/>
                         <Color value="3" color="blue"/>

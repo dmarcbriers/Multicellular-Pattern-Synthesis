@@ -46,13 +46,13 @@ def read_args():
     
     #Set command line arguments
     parser.add_argument("cell_line_1",
-                        help="Cell line 1.{CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,ROCK1-20--CDH1-0,wildtype}",
+                        help="Cell line 1.{CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,wildtype}",
                         type=str)
     parser.add_argument('time_1',
                         help='Time cell line 1 recives gene knockout signal[-144,96]',
                         type=str)
     parser.add_argument('cell_line_2',
-                        help='Cell line 2.{CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,ROCK1-20--CDH1-0,wildtype}',
+                        help='Cell line 2.{CDH1-0,CDH1-70,CDH1-75,CDH1-90,ROCK1-20,wildtype}',
                         type=str)
     parser.add_argument('time_2',
                         help='Time cell line 2 recieves gene knockout signal.[-144,96]',
@@ -64,7 +64,7 @@ def read_args():
                         help='Unique identifier for a simulations so replicates can be run.',
                         type=str)
     parser.add_argument('--simulation_time',
-                        help='Number of hours the model will simulate. Default is 120 (units are hours)',
+                        help='Number of hours the model will simulate. Default is 96 (units are hours)',
                         type=str)
     # Process arguments
     args = parser.parse_args()
@@ -201,6 +201,15 @@ def change_XML(args,model_file,cell_lines):
     """
     Cell_1 = cell_lines[args.cell_line_1]
     Cell_2 = cell_lines[args.cell_line_2]
+
+    if args.cell_line_1 not in cell_lines:
+        print("Error: The cell line %s is not supported by the simulator." % args.cell_line_1)
+        print("Try one of these:",list(cell_lines.keys()))
+        sys.exit()
+    if args.cell_line_2 not in cell_lines:
+        print("Error: The cell line %s is not supported by the simulator." % args.cell_line_2)
+        print("Try one of these:",list(cell_lines.keys()))
+        sys.exit()
 
     # 1. change ct1 and ct2 global variables
     doc = minidom.parse(model_file)
