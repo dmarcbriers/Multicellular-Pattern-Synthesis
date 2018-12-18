@@ -2,9 +2,9 @@
 
 ## Short Description
 
-This container replicates the computational environemet for the publication Briers & Libby et al.
+This container replicates the computational environemet for the publication: Briers, Libby,Haghighi, Joy, Conklin, Belta, and McDevitt
 
-## Container Contributors
+## Container Contributors (alphabetical order)
 - [Demarcus Briers](https://github.com/dmarcbriers)
 - Iman Haghighi
 - David Joy
