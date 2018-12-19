@@ -31,9 +31,15 @@ If a ready made image was not avaible from dockerhub, you can quickly rebuild th
 
 ```docker build --tag="dmarcbriers/mc-pattern-synthesis:latest" .```
 
-```cd ../model/ ```
+```cd ../ ```
 
 ```docker run --rm -v ${PWD}:/home/ubuntu/:rw  -it dmarcbriers/mc-pattern-synthesis:latest /bin/bash```
 
-Now you can pull up the help documentation to run a simulation with:
+If docker was successful you will notice a `#` sign at the enf of your terminal prompt. Since the user of this docker is `ubuntu` change to the users home folder to access local files on your systems.
+
+`cd /home/ubuntu/`
+
+Now you can pull up the help documentation to run a simulation from the model folder:
 ```python3 morpheusSetup.py -h ```
+
+You can also perform other analysis from our paper in the `image_segmentation/` and `synthesis/` folders.
