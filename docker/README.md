@@ -22,7 +22,7 @@ Once you have entered you login credential on the docker command line, make sure
 
 If that command was sucessful you can launcha docker container using the command below. Note, sometimes being on a VPN prevents docker from working so try disconnecting from your VPN client if docker is not working.
 
-```docker run --rm -v ${PATH}/:/home/ubuntu/:rw dmarcbriers/mc-pattern-synthesis:latest -it /bin/bash```
+```docker run --rm -v ${PWD}:/home/ubuntu/:rw dmarcbriers/mc-pattern-synthesis:latest -it /bin/bash```
 
 This will launch an interactive terminal with all necessary software. See the README in the model directiory for further instructions on running simulations.
 
@@ -33,7 +33,7 @@ If a ready made image was not avaible from dockerhub, you can quickly rebuild th
 
 ```cd ../model/ ```
 
-```docker run --rm -v ${PATH}/:/home/ubuntu/:rw dmarcbriers/mc-pattern-synthesis:latest -it /bin/bash```
+```docker run --rm -v ${PWD}:/home/ubuntu/:rw dmarcbriers/mc-pattern-synthesis:latest -it /bin/bash```
 
 Now you can pull up the help documentation to run a simulation with:
 ```python3 morpheusSetup.py -h ```
