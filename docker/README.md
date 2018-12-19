@@ -12,7 +12,7 @@ This container replicates the computational environemet for the publication: Bri
 
 
 ## Quickstart
-If you already have docker installed on your computer you can run the following commands to pull a docker image from dockerhub. To pull the image from dockerhub make sure your create a free account, then enter you login credential from the command line using:
+If you already have docker installed on your computer you can run the following commands to pull a docker image from dockerhub. If you are not familiar with docker there is a cheetsheet [here](https://github.com/wsargent/docker-cheat-sheet): To pull the image from dockerhub make sure your create a free account, then enter you login credential from the command line using:
 
 ```docker login -u <username> -p```
 
