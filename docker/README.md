@@ -40,6 +40,6 @@ If docker was successful you will notice a `#` sign at the enf of your terminal 
 `cd /home/ubuntu/`
 
 Now you can pull up the help documentation to run a simulation from the model folder:
-```python3 morpheusSetup.py -h ```
+```python3 MorpheusSetup.py -h ```
 
 You can also perform other analysis from our paper in the `image_segmentation/` and `synthesis/` folders.
