@@ -62,5 +62,5 @@ end
 if makePlot==true
     clf();
     plot(robustness);
-    saveas(1,'robustness.png');
+    saveas(1,'Scores.png');
 end
