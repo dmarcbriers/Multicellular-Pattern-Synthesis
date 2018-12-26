@@ -1,0 +1,40 @@
+Completed  0  % ... 
+iteration: 1 
+Simulation time for iteration 1: 1254.026453 
+Optimal parameters until now: 
+Parameter 1 = wildtype 
+Parameter 2 = -97 
+Parameter 3 = ROCK1-20 
+Parameter 4 = -3 
+Parameter 5 = 16 
+Optimal score until now: 0.000687 
+err = Inf 
+Completed  33  % ... 
+iteration: 2 
+Simulation time for iteration 2: 1274.493035 
+Optimal parameters until now: 
+Parameter 1 = wildtype 
+Parameter 2 = -97 
+Parameter 3 = ROCK1-20 
+Parameter 4 = -3 
+Parameter 5 = 16 
+Optimal score until now: 0.000687 
+err = Inf 
+Completed  67  % ... 
+iteration: 3 
+Simulation time for iteration 3: 1300.997270 
+Optimal parameters until now: 
+Parameter 1 = wildtype 
+Parameter 2 = -97 
+Parameter 3 = ROCK1-20 
+Parameter 4 = -3 
+Parameter 5 = 16 
+Optimal score until now: 0.000687 
+err = Inf 
+Final optimal parameters: 
+Parameter 1 = wildtype 
+Parameter 2 = -97 
+Parameter 3 = ROCK1-20 
+Parameter 4 = -3 
+Parameter 5 = 16 
+Final optimal score: 0.000687 
