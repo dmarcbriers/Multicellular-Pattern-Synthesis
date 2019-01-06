@@ -27,7 +27,7 @@ If that command was sucessful you can launcha docker container using the command
 This will launch an interactive terminal with all necessary software. See the README in the model directiory for further instructions on running simulations.
 
 ## Build Instructions
-If a ready made image was not avaible from dockerhub, you can quickly rebuild the image using the command (make sure you are inside of the docker directory when running the build command, and dont forget the period at the end):
+If a ready made image was not avaible from dockerhub, you can quickly rebuild the image using the command (make sure you are inside of the docker directory when running the build command, and dont forget the period at the end). This took about 10 minutes to build on a latpop with i7 processor, 32GB RAM, and a WiFi conenction:
 
 ```docker build --tag="dmarcbriers/mc-pattern-synthesis:latest" .```
 

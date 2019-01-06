@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install Python3/pip3, and GNU Octave
 RUN apt-get -y update && apt-get -y --no-install-recommends install make gcc gfortran g++ \
 libnetcdf-dev libxml2-dev libblas-dev liblapack-dev \
-libssl-dev pkg-config apt-transport-https python3 python3-pip octave && \
+libssl-dev pkg-config apt-transport-https python3 python3-pip octave ghostscript && \
     apt-get -y clean && apt-get -y autoremove && rm -rf /var/lib/{cache,log}/ /tmp/* /var/tmp/*
 
 
