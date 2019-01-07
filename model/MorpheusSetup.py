@@ -92,12 +92,12 @@ def configure_cell_lines():
                 'area_edge_final_sd':49.66,
                 'membraneElasticity_final':1.12,
                 'membraneElasticity_final_edge':1.32,
-		'membrane_str_final':0.5,
+		        'membrane_str_final':0.5,
                 'k_half_hours':48.28,
                 'generation_time_final': 20
                 }
     C['CDH1-0'] = {
-                    'adhesion_weak':-50,
+                    'adhesion_weak':-70,
                     'area_final':123,
                     'area_final_sd':51.78,
                     'area_edge_final':223,
@@ -156,14 +156,14 @@ def configure_cell_lines():
     # ROCK1 mutant has only one reference.
     # this ref isnt at 0 so rel mutants are not inferred.
     C['ROCK1-20'] = {
-                    'adhesion_weak':-75, #new data suggests 50% adhesion
+                    'adhesion_weak':-85, #new data suggests 50% CDH1 expression
                     'area_final':170,
                     'area_final_sd':53.54,
                     'area_edge_final':228,
                     'area_edge_final_sd':60.06,
                     'membraneElasticity_final':1.17, #was 1.37
                     'membraneElasticity_final_edge':1.41,  #was 1.97
-                    'membrane_str_final':2.0, #wt is 0.5
+                    'membrane_str_final':1.1, #wt is 0.5
                     'k_half_hours':46.78,
                     'generation_time_final': 20
                     }
