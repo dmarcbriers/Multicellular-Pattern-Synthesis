@@ -1,1 +1,28 @@
 model/simulation*
+
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+
+## python specific
+.cache
+MANIFEST
+PKG-INFO
+*.pyc
+*.mo
+*.egg-info
+*.egg
+*.EGG
+*.EGG-INFO
+.installed.cfg
+.mr.developer.cfg
+.hg
+.bzr
+.svn
+*.pyo
+*.tmp*
+.coverage
+.pytest_cache
