@@ -24,7 +24,7 @@ from matplotlib.ticker import MaxNLocator
 
 
 if len(sys.argv) == 1:
-    ECAD_mask_dir = pathlib.Path.home() / 'image_segmentation_clustering' / 'images' / 'bullseye'
+    ECAD_mask_dir = pathlib.Path.home() / 'Documents' / 'Git Hub' / 'Multicellular-Pattern-Synthesis' / 'image_segmentation_clustering' / 'images' / 'bullseye'
 else:
     ECAD_mask_dir = pathlib.Path(sys.argv[1])
 
@@ -33,8 +33,8 @@ tot_bullseye_file = ECAD_mask_dir.parent.parent / 'TotBullseyeParameters.csv'
 
 DAPI_MIN_DIST = 7
 DAPI_THRESHOLD_ABS = 20
-SHOW_PLOTS = False
-SHOW_PLOTS_DAPI = False
+SHOW_PLOTS = True
+SHOW_PLOTS_DAPI = True
 ANALYZE = True
 
 DAPI_COLOR = (0, 0, 255)
@@ -54,11 +54,11 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
         raise ValueError('Expected color image for {} got {}'.format(ECAD_mask_file, raw_mask.shape))
 
     ecad_weights = np.array(ECAD_COLOR).reshape((1, 1, 3)) / np.sum(ECAD_COLOR)
-    ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 100
+    ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 75
 
     #    ECAD_mask = ECAD_mask > 0.2
     ECAD_mask = remove_small_objects(ECAD_mask, min_size = 100)
-    ECAD_mask = remove_small_holes(ECAD_mask, min_size = 200)
+    ECAD_mask = remove_small_holes(ECAD_mask, min_size = 2000)
     ECAD_mask = binary_dilation(ECAD_mask)
     if SHOW_PLOTS:
         plt.imshow(ECAD_mask)
@@ -67,11 +67,15 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
     #this is creating the mask, first convert to grey scale from rgb, then threshold, then remove holes
     dapi_weights = np.array(DAPI_COLOR).reshape((1, 1, 3)) / np.sum(DAPI_COLOR)
     DAPI = np.sum(raw_mask * dapi_weights, axis=2)
-    DAPI_mask = DAPI > 139
+    DAPI_mask = DAPI > 10
 
-    DAPI_mask = remove_small_objects(DAPI_mask, min_size = 100000)
-    DAPI_mask = remove_small_holes(DAPI_mask, min_size = 2000)
-
+    DAPI_mask = remove_small_objects(DAPI_mask, min_size = 100)
+    DAPI_mask = remove_small_holes(DAPI_mask, min_size = 20000)
+    
+    if SHOW_PLOTS:
+        plt.imshow(DAPI_mask)
+        plt.show()
+        
     DAPI_dist = ndi.distance_transform_edt(DAPI_mask)
     local_maxi = peak_local_max(DAPI_dist, indices=False,min_distance = 500, labels=DAPI_mask) # if you want to include border images use exclude_border = False
     markers = ndi.label(local_maxi)[0]
