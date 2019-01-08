@@ -16,9 +16,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 USER root
 
 # Install Python3/pip3, and GNU Octave
-RUN apt-get -y update && apt-get -y --no-install-recommends install make gcc gfortran g++ \
+RUN apt-get -y update && \
+    apt-get -y --no-install-recommends install make gcc gfortran g++ \
     libnetcdf-dev libxml2-dev libblas-dev liblapack-dev \
-    libssl-dev pkg-config apt-transport-https python3 python3-pip octave ghostscript \
+    libssl-dev pkg-config apt-transport-https python3 python3-dev python3-pip \
+    octave ghostscript \
     wget \
     gnupg2 \
     bzip2 \
@@ -42,11 +44,10 @@ RUN chmod +x /tini
 RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN echo "deb https://deb.nodesource.com/node_11.x xenial main" | tee /etc/apt/sources.list.d/nodesource.list
 RUN echo "deb-src https://deb.nodesource.com/node_11.x xenial main" | tee -a /etc/apt/sources.list.d/nodesource.list
-RUN apt-get update
-RUN apt-get install -y nodejs
+RUN apt-get update && apt-get install -y nodejs
 
 # install morpheus
-ADD morpheus_1.9.2_amd64~b161102.deb /tmp/morpheus_1.9.2_amd64~b161102.deb
+ADD docker/morpheus_1.9.2_amd64~b161102.deb /tmp/morpheus_1.9.2_amd64~b161102.deb
 RUN apt-get install -y /tmp/morpheus_1.9.2_amd64~b161102.deb
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
@@ -62,13 +63,21 @@ ENV SHELL=/bin/bash \
     LANGUAGE=en_US.UTF-8 \
     HOME=/home/$NB_USER
 
-ADD fix-permissions /usr/local/bin/fix-permissions
+ADD docker/fix-permissions /usr/local/bin/fix-permissions
 
 RUN groupadd wheel -g 11 && \
     echo "auth required pam_wheel.so use_uid" >> /etc/pam.d/su && \
     useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
     chmod g+w /etc/passwd && \
     fix-permissions $HOME
+
+# Copy the local repository in
+ADD image_segmentation_clustering /home/$NB_USER/image_segmentation_clustering
+ADD model /home/$NB_USER/model
+ADD synthesis /home/$NB_USER/synthesis
+COPY requirements.txt /home/$NB_USER/
+COPY docker/scikit-image-0.15.dev0.tar.gz /home/$NB_USER/
+RUN fix-permissions /home/$NB_USER
 
 USER $NB_UID
 
@@ -78,13 +87,14 @@ RUN mkdir /home/$NB_USER/work && \
 
 # Install python3 modules
 RUN python3 -m venv /home/$NB_USER/.venv
-RUN /home/$NB_USER/.venv/bin/python3 -m pip install --upgrade pip setuptools && \
-    /home/$NB_USER/.venv/bin/python3 -m pip install matplotlib==2.1.0 numpy==1.15.2 pandas==0.20.3 scikit-image==0.14.1 scipy==0.19.1 seaborn==0.8.1 'notebook==5.7.2' 'jupyterhub==0.9.4' 'jupyterlab==0.35.4' && \
-    /home/$NB_USER/.venv/bin/jupyter labextension install @jupyterlab/hub-extension@^0.12.0 && \
+RUN /home/$NB_USER/.venv/bin/python3 -m pip install --upgrade pip setuptools
+RUN /home/$NB_USER/.venv/bin/python3 -m pip install -r /home/$NB_USER/requirements.txt
+RUN /home/$NB_USER/.venv/bin/python3 -m pip install -U /home/$NB_USER/scikit-image-0.15.dev0.tar.gz
+RUN /home/$NB_USER/.venv/bin/jupyter labextension install @jupyterlab/hub-extension@^0.12.0 && \
     npm cache clean --force && \
     /home/$NB_USER/.venv/bin/jupyter notebook --generate-config && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
-    fix-permissions /home/$NB_USER
+    rm -rf /home/$NB_USER/.cache/yarn
+RUN fix-permissions /home/$NB_USER
 
 # files to container
 # ADD runTest1.sh /usr/local/bin/runTest1.sh
@@ -100,7 +110,7 @@ ENTRYPOINT ["/tini", "-g", "--"]
 CMD ["/home/synth/.venv/bin/jupyter", "lab"]
 
 # Add local files as late as possible to avoid cache busting
-COPY jupyter_notebook_config.py /etc/jupyter/
+COPY docker/jupyter_notebook_config.py /etc/jupyter/
 RUN fix-permissions /etc/jupyter/
 RUN fix-permissions /home/$NB_USER
 
