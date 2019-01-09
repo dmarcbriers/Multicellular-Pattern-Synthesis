@@ -37,7 +37,7 @@ SHOW_PLOTS = True
 SHOW_PLOTS_DAPI = True
 ANALYZE = True
 
-DAPI_COLOR = (0, 0, 255)
+DAPI_COLOR = (0, 0, 250)
 ECAD_COLOR = (255, 0, 0)
 
 # change to True when things stop working to figure where it went wrong

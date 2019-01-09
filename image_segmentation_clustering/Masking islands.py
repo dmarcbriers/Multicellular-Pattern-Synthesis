@@ -36,7 +36,7 @@ DAPI_MIN_DIST = 7
 DAPI_THRESHOLD_ABS = 20
 
 ECAD_COLOR = (255, 255, 0)
-DAPI_COLOR = (0, 0, 255)
+DAPI_COLOR = (0, 0, 20)
 
 Stored_colony_center = []
 Stored_colony_area = []
@@ -50,7 +50,7 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
         raise ValueError('Expected color image for {} got {}'.format(ECAD_mask_file, raw_mask.shape))
 
     ecad_weights = np.array(ECAD_COLOR).reshape((1, 1, 3)) / np.sum(ECAD_COLOR)
-    ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 45
+    ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 65
 
     ECAD_mask = remove_small_objects(ECAD_mask, min_size = 100)
     ECAD_mask = remove_small_holes(ECAD_mask, min_size = 2000)
@@ -61,10 +61,10 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
     #this is creating the mask, first convert to grey scale from rgb, then threshold, then remove holes
     dapi_weights = np.array(DAPI_COLOR).reshape((1, 1, 3)) / np.sum(DAPI_COLOR)
     DAPI = np.sum(raw_mask * dapi_weights, axis=2)
-    DAPI_mask = DAPI > 5
+    DAPI_mask = DAPI > 10
+    DAPI_mask = binary_dilation(DAPI_mask, selem=np.ones((9, 9)))
+    DAPI_mask = remove_small_holes(DAPI_mask, min_size=20000)
     DAPI_mask = remove_small_objects(DAPI_mask, min_size=1000)
-    DAPI_mask = remove_small_holes(DAPI_mask, min_size=200000)
-    DAPI_mask = binary_dilation(DAPI_mask)
     
     if SHOW_PLOTS:
         plt.imshow(DAPI_mask)
