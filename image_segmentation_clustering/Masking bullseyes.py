@@ -6,25 +6,27 @@ Created on Fri Jan 26 13:13:37 2018
 @author: Ashley
 """
 import sys
+import pathlib
+
 import numpy as np
-from skimage.io import imread #this reads in images
-import pandas as pd
+
 from scipy import ndimage as ndi
-import seaborn as sns
 import scipy.spatial.distance as dist
+
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt #this lets me plot graphs
+
+from skimage.io import imread #this reads in images
 from skimage.color import rgb2grey # this converts rgb images to 8bit
 from skimage.morphology import label, watershed  # this labels each connected region
 from skimage.morphology import remove_small_objects, remove_small_holes, binary_dilation, disk # enssentially smoothens things
 from skimage.feature import peak_local_max
 from skimage.measure import regionprops #measures the max threshold  within certian radius and records its location
 # find contours in skimage google this for circularity
-import pathlib
-from matplotlib.ticker import MaxNLocator
-
 
 if len(sys.argv) == 1:
-    ECAD_mask_dir = pathlib.Path.home() / 'Documents' / 'Git Hub' / 'Multicellular-Pattern-Synthesis' / 'image_segmentation_clustering' / 'images' / 'bullseye'
+    ECAD_mask_dir = pathlib.Path.home() / 'image_segmentation_clustering' / 'images' / 'bullseye'
 else:
     ECAD_mask_dir = pathlib.Path(sys.argv[1])
 
@@ -33,8 +35,8 @@ tot_bullseye_file = ECAD_mask_dir.parent.parent / 'TotBullseyeParameters.csv'
 
 DAPI_MIN_DIST = 7
 DAPI_THRESHOLD_ABS = 20
-SHOW_PLOTS = True
-SHOW_PLOTS_DAPI = True
+SHOW_PLOTS = False
+SHOW_PLOTS_DAPI = False
 ANALYZE = True
 
 DAPI_COLOR = (0, 0, 250)
@@ -50,8 +52,11 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
     # Load and split the ECAD mask file
     print('Loading colony data from {}'.format(ECAD_mask_file))
     raw_mask = imread(str(ECAD_mask_file))
-    if raw_mask.ndim != 3 or raw_mask.shape[2] != 3:
+    if raw_mask.ndim != 3 or raw_mask.shape[2] not in (3, 4):
         raise ValueError('Expected color image for {} got {}'.format(ECAD_mask_file, raw_mask.shape))
+    if raw_mask.shape[2] == 4:
+        # Throw out the alpha channel
+        raw_mask = raw_mask[:, :, :3]
 
     ecad_weights = np.array(ECAD_COLOR).reshape((1, 1, 3)) / np.sum(ECAD_COLOR)
     ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 75
@@ -71,11 +76,11 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
 
     DAPI_mask = remove_small_objects(DAPI_mask, min_size = 100)
     DAPI_mask = remove_small_holes(DAPI_mask, min_size = 20000)
-    
+
     if SHOW_PLOTS:
         plt.imshow(DAPI_mask)
         plt.show()
-        
+
     DAPI_dist = ndi.distance_transform_edt(DAPI_mask)
     local_maxi = peak_local_max(DAPI_dist, indices=False,min_distance = 500, labels=DAPI_mask) # if you want to include border images use exclude_border = False
     markers = ndi.label(local_maxi)[0]
