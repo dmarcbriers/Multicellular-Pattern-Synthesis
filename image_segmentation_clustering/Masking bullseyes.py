@@ -6,6 +6,7 @@ Created on Fri Jan 26 13:13:37 2018
 @author: Ashley
 """
 import sys
+import shutil
 import pathlib
 
 import numpy as np
@@ -25,18 +26,21 @@ from skimage.feature import peak_local_max
 from skimage.measure import regionprops #measures the max threshold  within certian radius and records its location
 # find contours in skimage google this for circularity
 
+THISDIR = pathlib.Path(__file__).resolve().parent
 if len(sys.argv) == 1:
-    ECAD_mask_dir = pathlib.Path.home() / 'image_segmentation_clustering' / 'images' / 'bullseye'
+    ECAD_mask_dir = THISDIR / 'images' / 'bullseye'
 else:
     ECAD_mask_dir = pathlib.Path(sys.argv[1])
 
-bullseye_file = ECAD_mask_dir.parent.parent / 'BullseyeParameters.csv'
-tot_bullseye_file = ECAD_mask_dir.parent.parent / 'TotBullseyeParameters.csv'
+plot_dir = THISDIR / 'plots' / 'bullseye'
+
+bullseye_file = THISDIR / 'BullseyeParameters.csv'
+tot_bullseye_file = THISDIR / 'TotBullseyeParameters.csv'
 
 DAPI_MIN_DIST = 7
 DAPI_THRESHOLD_ABS = 20
-SHOW_PLOTS = False
-SHOW_PLOTS_DAPI = False
+SHOW_PLOTS = True
+SHOW_PLOTS_DAPI = True
 ANALYZE = True
 
 DAPI_COLOR = (0, 0, 250)
@@ -48,6 +52,11 @@ Stored_colony_center = []
 Stored_colony_area = []
 
 def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
+
+    ECAD_plot_dir = plot_dir / ECAD_mask_file.stem
+    if ECAD_plot_dir.is_dir():
+        shutil.rmtree(str(ECAD_plot_dir))
+    ECAD_plot_dir.mkdir(parents=True)
 
     # Load and split the ECAD mask file
     print('Loading colony data from {}'.format(ECAD_mask_file))
@@ -66,8 +75,10 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
     ECAD_mask = remove_small_holes(ECAD_mask, min_size = 2000)
     ECAD_mask = binary_dilation(ECAD_mask)
     if SHOW_PLOTS:
-        plt.imshow(ECAD_mask)
-        plt.show()
+        fig, ax = plt.subplots(1, 1)
+        ax.imshow(ECAD_mask)
+        fig.savefig(str(ECAD_plot_dir / 'ECAD_mask.png'), transparent=True)
+        plt.close()
 
     #this is creating the mask, first convert to grey scale from rgb, then threshold, then remove holes
     dapi_weights = np.array(DAPI_COLOR).reshape((1, 1, 3)) / np.sum(DAPI_COLOR)
@@ -78,8 +89,10 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
     DAPI_mask = remove_small_holes(DAPI_mask, min_size = 20000)
 
     if SHOW_PLOTS:
-        plt.imshow(DAPI_mask)
-        plt.show()
+        fig, ax = plt.subplots(1, 1)
+        ax.imshow(DAPI_mask)
+        fig.savefig(str(ECAD_plot_dir / 'DAPI_mask.png'), transparent=True)
+        plt.close()
 
     DAPI_dist = ndi.distance_transform_edt(DAPI_mask)
     local_maxi = peak_local_max(DAPI_dist, indices=False,min_distance = 500, labels=DAPI_mask) # if you want to include border images use exclude_border = False
@@ -90,11 +103,12 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
 #    DAPI = binary_dilation(DAPI, disk(100)) # slows down computer too much
     #larger scale than binary_dilation the disk is the rasdius of ball rolling to fill gaps
     if SHOW_PLOTS:
-        fig,(ax1,ax2,ax3) = plt.subplots(1,3)
+        fig,(ax1, ax2, ax3) = plt.subplots(1, 3)
         ax1.imshow(DAPI)
         ax2.imshow(DAPI_dist, cmap='inferno')
         ax3.imshow(DAPI_labels, cmap='inferno')
-        plt.show()
+        fig.savefig(str(ECAD_plot_dir / 'DAPI_segmentation.png'), transparent=True)
+        plt.close()
     print(np.unique(DAPI_labels))
 #    plt.imshow(np.logical_and(ECAD_mask, DAPI_labels))
 #    plt.show()
@@ -118,51 +132,27 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
         print(DAPI_peaks_tot.shape[0])
 
         if SHOW_PLOTS_DAPI:
+            fig, ax = plt.subplots()
+            im = ax.imshow(DAPI_colony, cmap='gist_earth')
+            ax.plot(DAPI_peaks_tot[:, 1], DAPI_peaks_tot[:, 0], '.r')
+            ax.set_xlim(np.min(DAPI_peaks_tot[:, 1]), np.max(DAPI_peaks_tot[:, 1]))
+            ax.set_ylim(np.min(DAPI_peaks_tot[:, 0]), np.max(DAPI_peaks_tot[:, 0]))
+            plt.colorbar(mappable=im)
+            fig.savefig(str(ECAD_plot_dir / 'DAPI_peaks_c{:02d}.png'.format(colony_ID)), transparent=True)
+            plt.close()
 
-            plt.imshow(DAPI_colony, cmap= 'gist_earth')
-            plt.plot(DAPI_peaks_tot[:,1],DAPI_peaks_tot[:,0], '.r')
-            plt.xlim(1000,1100)
-            plt.ylim(3000,3100)
-#            plt.xlim(np.min(DAPI_peaks_tot[:,1]), np.max(DAPI_peaks_tot[:,1]))
-#            plt.ylim(np.min(DAPI_peaks_tot[:,0]), np.max(DAPI_peaks_tot[:,0]))
-            plt.colorbar()
-            plt.show()
-        if SHOW_PLOTS_DAPI:
-
-            plt.imshow(DAPI_colony, cmap= 'gist_earth')
-            plt.plot(DAPI_peaks_tot[:,1],DAPI_peaks_tot[:,0], '.r')
-            plt.xlim(1000,1100)
-            plt.ylim(2000,2100)
-            plt.colorbar()
-            plt.show()
-        if SHOW_PLOTS_DAPI:
-
-            plt.imshow(DAPI_colony, cmap= 'gist_earth')
-            plt.plot(DAPI_peaks_tot[:,1],DAPI_peaks_tot[:,0], '.r')
-            plt.xlim(1000,1100)
-            plt.ylim(3500,3600)
-            plt.colorbar()
-            plt.show()
-        if SHOW_PLOTS_DAPI:
-
-            plt.imshow(DAPI_colony, cmap= 'gist_earth')
-            plt.plot(DAPI_peaks_tot[:,1],DAPI_peaks_tot[:,0], '.r')
-            plt.xlim(1000,1100)
-            plt.ylim(3700,3800)
-            plt.colorbar()
-            plt.show()
-#        Island_FP.write('{},{}\n'.format(colony_ID, colony_center))
         if SHOW_PLOTS:
-            fig,(ax1,ax2,ax3) = plt.subplots(1,3)
-            ax1.imshow(ECAD_mask, cmap = 'inferno')
+            fig,(ax1, ax2, ax3) = plt.subplots(1,3)
+            ax1.imshow(ECAD_mask, cmap='inferno')
             ax2.imshow(DAPI_labels == colony_ID, cmap='inferno')
-            ax3.imshow(np.logical_and(ECAD_mask, DAPI_labels ==colony_ID), cmap = 'inferno')
-            plt.show()
+            ax3.imshow(np.logical_and(ECAD_mask, DAPI_labels ==colony_ID), cmap='inferno')
+            fig.savefig(str(ECAD_plot_dir / 'DAPI_segmentation_c{:02d}.png'.format(colony_ID)), transparent=True)
+            plt.close()
 
-        analyze_islands(Island_FP, Total_FP, colony_ID, colony_area, colony_center, ECAD_mask_file, np.logical_and(ECAD_mask, DAPI_labels == colony_ID), DAPI, DAPI_peaks_tot)
+        analyze_islands(Island_FP, Total_FP, colony_ID, colony_area, colony_center, ECAD_mask_file, np.logical_and(ECAD_mask, DAPI_labels == colony_ID), DAPI, DAPI_peaks_tot, ECAD_plot_dir)
 
 
-def analyze_islands(Islands_FP,Total_FP, colony_ID, colony_area, colony_center,ECAD_mask_file, ECAD_mask, DAPI, DAPI_peaks_tot):
+def analyze_islands(Islands_FP, Total_FP, colony_ID, colony_area, colony_center, ECAD_mask_file, ECAD_mask, DAPI, DAPI_peaks_tot, ECAD_plot_dir):
     '''Making the mask over islands and DAPI'''
 #making large function so that we can call in each file
 #Islands_FP is the eventual writing file function where everything is to be stored
@@ -211,27 +201,25 @@ def analyze_islands(Islands_FP,Total_FP, colony_ID, colony_area, colony_center,E
         print('island{} in {}'.format(Over50_islands, colony_ID))
         dist_from_center_norm = dist.euclidean(colony_center, region.centroid)/ colony_area
         island_circ = (4 * np.pi * region.area)/ (region.perimeter * region.perimeter)
-#        if DAPI_file.name.endswith('_s18c3.tif'):
-##        if DAPI_file.is_file('/Users/Ashley/Documents/UCSF/EBICS/EBICS predicted patterns/Island patterns/DAY 4/un-edited/DAPI/CDH1 WT d4-Image Export-08_s18c3.tif'):
-#           #didn't work error 'str' object has no attribute 'is_file'
+
         if SHOW_PLOTS:
             Xmin = np.min(DAPI_peaks[:,1])
             Xmax = np.max(DAPI_peaks[:,1])
             Ymin = np.min(DAPI_peaks[:,0])
             Ymax = np.max(DAPI_peaks[:,0])
             # this is just to create MAX to MIN coordinates to help zoom in later
-            plt.imshow(DAPI_island, cmap = 'gist_earth')
-            plt.plot(DAPI_peaks[:,1],DAPI_peaks[:,0],'.r')
+            fig, ax = plt.subplots(1, 1)
+            im = ax.imshow(DAPI_island, cmap = 'gist_earth')
+            ax.plot(DAPI_peaks[:,1], DAPI_peaks[:,0],'.r')
             #peaks is going to be a list of points so we are pulling the x and y coordinate out of peaks
             # normally draws lins, but '.r' plots red dots
-            plt.xlim([Xmin,Xmax])
-            plt.ylim([Ymin,Ymax])
+            ax.set_xlim([Xmin, Xmax])
+            ax.set_ylim([Ymin, Ymax])
             #zooming in on plot to Xmin and max
-    #
-            plt.colorbar()
-                # you want this!
-            plt.show()
-#            print(DAPI_file)
+            plt.colorbar(mappable=im)
+            fig.savefig(str(ECAD_plot_dir / 'Island_c{:02d}r{:03d}.png'.format(colony_ID, label_ID)), transparent=True)
+            plt.close()
+
         Islands_FP.write('{},{},{},{}, {}, {}, {},{},{},{}\n'.format(
                 ECAD_mask_file,
                 colony_ID,
