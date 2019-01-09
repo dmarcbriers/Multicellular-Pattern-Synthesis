@@ -50,11 +50,10 @@ def segment_colonies(Island_FP, Total_FP, ECAD_mask_file):
         raise ValueError('Expected color image for {} got {}'.format(ECAD_mask_file, raw_mask.shape))
 
     ecad_weights = np.array(ECAD_COLOR).reshape((1, 1, 3)) / np.sum(ECAD_COLOR)
-    ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 65
-
+    ECAD_mask = np.sum(raw_mask * ecad_weights, axis=2) > 45
     ECAD_mask = remove_small_objects(ECAD_mask, min_size = 100)
     ECAD_mask = remove_small_holes(ECAD_mask, min_size = 2000)
-    ECAD_mask = binary_erosion(ECAD_mask)
+#    ECAD_mask = binary_erosion(ECAD_mask)
     if SHOW_PLOTS:
         plt.imshow(ECAD_mask)
         plt.show()
