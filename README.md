@@ -2,9 +2,9 @@
 
 ## Container Contributors (alphabetical order)
 - [Demarcus Briers](https://github.com/dmarcbriers)
-- Iman Haghighi
+- [Iman Haghighi](https://github.com/imanh10)
 - David Joy
-- Ashley Libby
+- [Ashley Libby](https://github.com/arglibby1650G)
 
 ## Quicky Start Guide
 This repository contains the code to replicate the computational environement for the publication by Demarcus Briers and Ashley Libby, Iman Haghighi, David Joy, Bruce Conklin, Calin Belta, and Todd McDevitt.
