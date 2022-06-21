@@ -1,7 +1,7 @@
 Cython==0.29
 wheel==0.32.3
 matplotlib==2.1.0
-numpy==1.15.2
+numpy==1.22.0
 pandas==0.20.3
 scipy==0.19.1
 seaborn==0.8.1
