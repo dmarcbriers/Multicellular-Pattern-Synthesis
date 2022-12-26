@@ -1,5 +1,5 @@
 Cython==0.29
-wheel==0.32.3
+wheel==0.38.1
 matplotlib==2.1.0
 numpy==1.15.2
 pandas==0.20.3
